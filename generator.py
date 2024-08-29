@@ -1,30 +1,25 @@
-from typing import List
+# Write the distance_loop method
+#import math
 
-def all_distances(numbers: List[float]) -> List[List[float]]:
-    """Return a nxn two-dimensional list containing the pairwise distances
-    between all n provided numbers, where entry (i, j) contains the absolute 
-    value of the difference between the i'th and j'th entry in the list.
-
-    >>> all_distances([0.0, 1.0, 3.0])
-    [[0.0, 1.0, 3.0], 
-     [1.0, 0.0, 2.0], 
-     [3.0, 2.0, 0.0]]
+def distance_loop(x1, x2):
+    """ Returns the Euclidean distance between the 1-d numpy arrays x1 and x2"""
     
-    """
     # YOUR CODE HERE
     #raise NotImplementedError()
-    n = len(numbers)
+    # return math.sqrt(math.pow((x1[0]-x2[0]), 2) + math.pow((x1[1]-x2[1]), 2))
+    distance = 0
+    for i in range(len(x1)):
+        distance += (x1[i]-x2[i]) ** 2
 
-    # matrix = [[x] for x in range(n)]
-    matrix = [0] * n
-    #for i in range(n):
-        #new_list = [n]
-        #matrix.append()
+    distance = distance ** (1/2)
     
-    for i in range(n):
-        for j in range(n):
-            matrix[i][j] = abs(matrix[i] - matrix[j])
+    return distance
 
-    return matrix
+import numpy as np
+import math
 
-print(all_distances([0.0, 1.0, 3.0]))
+a = np.array([1.0, 2.0, 3.0])
+b = np.array([0.0, 1.0, 4.0])
+
+test_distance = distance_loop(a, b) 
+expected_answer = 1.7320508075688772
