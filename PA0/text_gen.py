@@ -180,12 +180,12 @@ def calculate_trigrams(word_list: List[str]) -> TrigramDict:
             trigrams[bigram][next_word] = 0
         trigrams[bigram][next_word] += 1
         
-        # convert counts to probabilities
-        for bigram, next_word_counts in trigrams.items():
-            total_count = bigram_counts[bigram]
-            trigrams[bigram] = { word: count / total_count for word, count in next_word_counts.items() }
-        
-        return trigrams
+    # convert counts to probabilities
+    for bigram, next_word_counts in trigrams.items():
+        total_count = bigram_counts[bigram]
+        trigrams[bigram] = {word: count / total_count for word, count in next_word_counts.items()}
+    
+    return trigrams
 
 
 def random_unigram_text(unigrams: Dict[str, float], num_words: int) -> str:
