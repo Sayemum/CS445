@@ -6,7 +6,7 @@ Version: 1/18/2021
 
 """
 
-import unittest
+import unittest as unittest
 
 from card import Card
 
