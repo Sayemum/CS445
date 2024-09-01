@@ -35,24 +35,20 @@ class Card:
     def __ge__(self, that):
         return self > that or self == that
     
-    
     """Gets the card's rank."""
     @property
     def rank(self):
         return self.__rank
-    
     
     """Gets the card's suit."""
     @property
     def suit(self):
         return self.__suit
     
-    
     """Returns the card's index in a sorted deck of 52 cards."""
     @property
     def position(self):
         return self.suit * 13 + self.rank - 1
-    
     
     """Returns a string representation of the card."""
     def __str__(self):

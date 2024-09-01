@@ -12,7 +12,7 @@ Modified: 8/31/24
 
 import random
 import string
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Tuple
 from collections import defaultdict
 
 # Create some type aliases to simplify the type hinting below.
@@ -56,20 +56,19 @@ def calculate_unigrams(word_list: List[str]) -> Dict[str, float]:
     {'i': 0.4, 'am': 0.2, 'think': 0.2, 'therefore': 0.2}
 
     """
-        # YOUR CODE HERE
+    # YOUR CODE HERE
     # raise NotImplementedError()
-    occurrences = {}
+    word_counts = {}
     
     for word in word_list:
-        if word in occurrences:
-            occurrences[word] += 1
+        if word in word_counts:
+            word_counts[word] += 1
         else:
-            occurrences[word] = 1
+            word_counts[word] = 1
     
     total_words = len(word_list)
     
-    
-    prob_distributions = {word: (occurrence / total_words) for word,occurrence in occurrences.items() }
+    prob_distributions = {word: (count / total_words) for word, count in word_counts.items()}
     
     return prob_distributions
 
@@ -219,6 +218,7 @@ def random_unigram_text(unigrams: Dict[str, float], num_words: int) -> str:
     
     return random_text
 
+
 def random_bigram_text(first_word: str, bigrams: BigramDict, num_words: int) -> str:
     """Generate a random sequence of words following the word pair
     probabilities in the provided distribution.
@@ -318,7 +318,7 @@ def random_trigram_text(
         
         result.append(next_word)
         
-        return ' '.join(result)
+    return ' '.join(result)
 
 
 def unigram_main():
