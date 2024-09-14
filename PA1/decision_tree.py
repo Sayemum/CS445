@@ -98,6 +98,41 @@ def split_generator(X, y, keep_counts=True):
                             X_sort[index::, :], y_sort[index::], counts_right)
 
 
+def impurity(y, y_counts=None):
+    """ Calculate Gini impurity for the class labels y.
+        If y_counts is provided it will be the counts of the labels in y.
+    """
+    if y_counts is None:
+        # calculate count of every class in y
+        y_counts = np.array(list(Counter(y).values()), dtype=float)
+    else:
+        # y_counts is an iterable so we convert to numpy array
+        y_counts = np.array(list(y_counts.values()), dtype=float)
+
+    # total samples
+    total_samples = np.sum(y_counts)
+
+    # proportions of each class
+    proportions = y_counts / total_samples
+
+    # return gini inpurity
+    return 1 - np.sum(proportions ** 2)
+
+
+def weighted_impurity(split):
+    """ Weighted gini impurity for a possible split. """ 
+    total_samples = len(split.y_left) + len(split.y_right)
+
+    # calculate impurity of left and right splits
+    impurity_left = impurity(split.y_left, split.counts_left)
+    impurity_right = impurity(split.y_right, split.counts_right)
+
+    # weighted impurity
+    weighted_impurity = (len(split.y_left) / total_samples * impurity_left) + (len(split.y_right) / total_samples * impurity_right)
+
+    return weighted_impurity
+
+
 class DecisionTree(ABC):
     """
     A binary decision tree for use with real-valued attributes.
@@ -111,6 +146,10 @@ class DecisionTree(ABC):
         :param max_depth: limit on the tree depth.
                           A depth 0 tree will have no splits.
         """
+        self.max_depth = max_depth
+        
+        # initialize the root of tree
+        self.root = None
 
     def fit(self, X, y):
         """
@@ -125,7 +164,7 @@ class DecisionTree(ABC):
     def predict(self, X):
         """
         Predict labels for a data set by finding the appropriate leaf node for
-        each input and using either the the majority label or the mean value
+        each input and using either the majority label or the mean value
         as the prediction.
 
         :param X:  Numpy array with shape (num_samples, num_features)
@@ -140,7 +179,8 @@ class DecisionTree(ABC):
         :return: The depth of the decision tree.
         """
         # LOGIC SHOULD BE THE SAME FOR BOTH TREE TYPES
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        return self.max_depth
 
 
 class DecisionTreeClassifier(DecisionTree):
@@ -148,9 +188,17 @@ class DecisionTreeClassifier(DecisionTree):
     A binary decision tree classifier for use with real-valued attributes.
 
     """
-    pass
+    # pass
     # Feel free to add methods as needed. Avoid code duplication by keeping
     # common functionality in the superclass.
+    def fit(self, X, y):
+        # target val is categorical
+        # split data based on gini impurity
+        # predict class label for given input data
+        pass
+        
+        # split dataset into testing and training
+        
 
 
 class DecisionTreeRegressor(DecisionTree):
@@ -158,9 +206,14 @@ class DecisionTreeRegressor(DecisionTree):
     A binary decision tree regressor for use with real-valued attributes.
 
     """
-    pass
+    # pass
     # Feel free to add methods as needed. Avoid code duplication by keeping
     # common functionality in the superclass.
+    def fit(self, X, y):
+        # target val is continuous
+        # split data based on MSE or variance reduction
+        # predict continuous val for given input data
+        pass
 
 
 class Node:
@@ -175,7 +228,17 @@ class Node:
         split: A Split object representing the split at this node,
                 or Null for leaves
     """
-    pass
+    # pass
+    def __init__(self, feature_index=None, threshold=None, left=None, right=None, info_gain=None, value=None):
+        # for decision node
+        self.feature_index = feature_index
+        self.threashold = threshold
+        self.left = left
+        self.right = right
+        self.info_gain = info_gain
+        
+        # for leaf node
+        self.value = value
 
 
 def tree_demo():

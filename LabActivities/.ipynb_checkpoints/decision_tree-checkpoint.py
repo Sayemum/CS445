@@ -4,8 +4,8 @@ Simple binary decision tree classifier and regressor.
 Splits for classification are based on Gini impurity. Splits for
 regression are based on variance.
 
-Author: CS445 Instructor and Sayemum Hassan
-Version: 1
+Author: CS445 Instructor and ???
+Version:
 
 """
 from collections import namedtuple, Counter
@@ -111,7 +111,6 @@ class DecisionTree(ABC):
         :param max_depth: limit on the tree depth.
                           A depth 0 tree will have no splits.
         """
-        self.max_depth = max_depth
 
     def fit(self, X, y):
         """
@@ -126,7 +125,7 @@ class DecisionTree(ABC):
     def predict(self, X):
         """
         Predict labels for a data set by finding the appropriate leaf node for
-        each input and using either the majority label or the mean value
+        each input and using either the the majority label or the mean value
         as the prediction.
 
         :param X:  Numpy array with shape (num_samples, num_features)
@@ -141,8 +140,7 @@ class DecisionTree(ABC):
         :return: The depth of the decision tree.
         """
         # LOGIC SHOULD BE THE SAME FOR BOTH TREE TYPES
-        # raise NotImplementedError()
-        return self.max_depth
+        raise NotImplementedError()
 
 
 class DecisionTreeClassifier(DecisionTree):
@@ -177,11 +175,7 @@ class Node:
         split: A Split object representing the split at this node,
                 or Null for leaves
     """
-    # pass
-    def __init__(self, left=None, right=None, split=None):
-        self.left = left
-        self.right = right
-        self.split = split
+    pass
 
 
 def tree_demo():
