@@ -73,7 +73,8 @@ class MyTestCase(unittest.TestCase):
         tree.fit(X, y)
         X_test = np.random.random((100, 2)) - .5 * 2
         y_test = tree.predict(X_test)
-        self.assertTrue(np.alltrue(y_test == expected_class))
+        # self.assertTrue(np.alltrue(y_test == expected_class))
+        self.assertTrue(np.all(y_test == expected_class))
 
     def test_depth0_trees(self):
         self.depth0_majority_helper(self.X2, self.y2, 1)
