@@ -4,13 +4,13 @@ Simple binary decision tree classifier and regressor.
 Splits for classification are based on Gini impurity. Splits for
 regression are based on variance.
 
-Author: CS445 Instructor and ChatGPT
-Version: 1.0
+Author: CS445 Instructor and Sayemum Hassan
+Version: 1
 
 """
 from collections import namedtuple, Counter
 import numpy as np
-from abc import ABC, abstractmethod
+from abc import ABC
 
 # Named tuple is a quick way to create a simple wrapper class...
 Split_ = namedtuple('Split',
@@ -101,6 +101,7 @@ def split_generator(X, y, keep_counts=True):
 class DecisionTree(ABC):
     """
     A binary decision tree for use with real-valued attributes.
+
     """
 
     def __init__(self, max_depth=np.inf):
@@ -120,47 +121,30 @@ class DecisionTree(ABC):
         :param X: Numpy array with shape (num_samples, num_features)
         :param y: Numpy array with length num_samples
         """
-        self._root = self._build_tree(X, y, depth=0)
+        # LOGIC MIGHT BE THE SAME FOR BOTH TREE TYPES?
+        self._root = self.build_tree(X, y, depth=0)
 
     def predict(self, X):
         """
         Predict labels for a data set by finding the appropriate leaf node for
-        each input and using either the the majority label or the mean value
+        each input and using either the majority label or the mean value
         as the prediction.
 
-        :param X: Numpy array with shape (num_samples, num_features)
+        :param X:  Numpy array with shape (num_samples, num_features)
         :return: A length num_samples numpy array containing predictions.
         """
-        predictions = [self._predict_row(row, self._root) for row in X]
+        # LOGIC CAN PROBABLY BE THE SAME FOR BOTH TREE TYPES?
+        # (DEPENDS ON HOW YOU IMPLEMENT YOUR NODE CLASSES)
+        predictions = [self.predict_row(row, self._root) for row in X]
         return np.array(predictions)
 
     def get_depth(self):
         """
         :return: The depth of the decision tree.
         """
+        # LOGIC SHOULD BE THE SAME FOR BOTH TREE TYPES
         return self._get_depth(self._root)
-
-    def _build_tree(self, X, y, depth):
-        """
-        Recursively build the decision tree.
-
-        :param X: Numpy array with shape (num_samples, num_features)
-        :param y: Numpy array with length num_samples
-        :param depth: Current depth of the tree
-        :return: Root node of the decision tree
-        """
-        if depth >= self.max_depth or len(set(y)) == 1:
-            return Node(value=self._leaf_value(y))
-
-        split = self._best_split(X, y)
-        if split is None:
-            return Node(value=self._leaf_value(y))
-
-        node = Node(split=split)
-        node.left = self._build_tree(split.X_left, split.y_left, depth + 1)
-        node.right = self._build_tree(split.X_right, split.y_right, depth + 1)
-        return node
-
+    
     def _get_depth(self, node):
         """
         Recursively find the depth of the tree.
@@ -170,9 +154,32 @@ class DecisionTree(ABC):
         """
         if node is None or node.value is not None:
             return 0
+        
         return 1 + max(self._get_depth(node.left), self._get_depth(node.right))
 
-    def _predict_row(self, row, node):
+    def build_tree(self, X, y, depth):
+        """
+        Recursively build the decision tree.
+
+        :param X: Numpy array with shape (num_samples, num_features)
+        :param y: Numpy array with length num_samples
+        :param depth: Current depth of the tree
+        :return: Root node of the tree
+        """
+        if depth >= self.max_depth or len(set(y)) == 1:
+            return Node(value=self.leaf_value(y))
+
+        split = self.best_split(X, y)
+        if split is None:
+            return Node(value=self.leaf_value(y))
+
+        node = Node(split=split)
+        node.left = self.build_tree(split.X_left, split.y_left, depth + 1)
+        node.right = self.build_tree(split.X_right, split.y_right, depth + 1)
+        
+        return node
+
+    def predict_row(self, row, node):
         """
         Predict the label for a single row of input.
 
@@ -183,30 +190,35 @@ class DecisionTree(ABC):
         if node.value is not None:
             return node.value
         if row[node.split.dim] <= node.split.pos:
-            return self._predict_row(row, node.left)
-        return self._predict_row(row, node.right)
+            return self.predict_row(row, node.left)
+        
+        return self.predict_row(row, node.right)
 
 
 class DecisionTreeClassifier(DecisionTree):
     """
     A binary decision tree classifier for use with real-valued attributes.
-    """
 
-    def _gini_impurity(self, y):
+    """
+    # Feel free to add methods as needed. Avoid code duplication by keeping
+    # common functionality in the superclass.
+    def gini_impurity(self, y, y_counts=None):
         """
         Calculate the Gini impurity for a list of labels.
 
-        :param y: Numpy array of labels
+        :param y: Numpy array of labels y
         :return: The Gini impurity
         """
-        counts = Counter(y)
+        counts = y_counts or Counter(y)
         impurity = 1.0
+        
         for label in counts:
-            prob = counts[label] / len(y)
-            impurity -= prob ** 2
+            probability = counts[label] / len(y)
+            impurity -= probability ** 2
+        
         return impurity
 
-    def _best_split(self, X, y):
+    def best_split(self, X, y):
         """
         Find the best split for the data.
 
@@ -218,9 +230,9 @@ class DecisionTreeClassifier(DecisionTree):
         best_impurity = float('inf')
 
         for split in split_generator(X, y):
-            if split.y_left.size and split.y_right.size:
-                left_impurity = self._gini_impurity(split.y_left)
-                right_impurity = self._gini_impurity(split.y_right)
+            if split.y_left.size > 0 and split.y_right.size > 0:
+                left_impurity = self.gini_impurity(split.y_left)
+                right_impurity = self.gini_impurity(split.y_right)
                 total_impurity = (len(split.y_left) * left_impurity +
                                   len(split.y_right) * right_impurity) / len(y)
 
@@ -230,7 +242,7 @@ class DecisionTreeClassifier(DecisionTree):
 
         return best_split
 
-    def _leaf_value(self, y):
+    def leaf_value(self, y):
         """
         Determine the value for a leaf node.
 
@@ -243,9 +255,11 @@ class DecisionTreeClassifier(DecisionTree):
 class DecisionTreeRegressor(DecisionTree):
     """
     A binary decision tree regressor for use with real-valued attributes.
-    """
 
-    def _variance(self, y):
+    """
+    # Feel free to add methods as needed. Avoid code duplication by keeping
+    # common functionality in the superclass.
+    def variance(self, y):
         """
         Calculate the variance for a list of values.
 
@@ -254,7 +268,7 @@ class DecisionTreeRegressor(DecisionTree):
         """
         return np.var(y)
 
-    def _best_split(self, X, y):
+    def best_split(self, X, y):
         """
         Find the best split for the data.
 
@@ -266,9 +280,9 @@ class DecisionTreeRegressor(DecisionTree):
         best_variance = float('inf')
 
         for split in split_generator(X, y):
-            if split.y_left.size and split.y_right.size:
-                left_variance = self._variance(split.y_left)
-                right_variance = self._variance(split.y_right)
+            if split.y_left.size > 0 and split.y_right.size > 0:
+                left_variance = self.variance(split.y_left)
+                right_variance = self.variance(split.y_right)
                 total_variance = (len(split.y_left) * left_variance +
                                   len(split.y_right) * right_variance) / len(y)
 
@@ -278,7 +292,7 @@ class DecisionTreeRegressor(DecisionTree):
 
         return best_split
 
-    def _leaf_value(self, y):
+    def leaf_value(self, y):
         """
         Determine the value for a leaf node.
 
@@ -290,17 +304,19 @@ class DecisionTreeRegressor(DecisionTree):
 
 class Node:
     """
-    Node class for the decision tree.
+    It will probably be useful to have a Node class.  In order to use the
+    visualization code in draw_trees, the node class must have three
+    attributes:
 
     Attributes:
-        left: A Node object or None for leaves.
-        right: A Node object or None for leaves.
-        split: A Split object representing the split at this node, or None for leaves.
-        value: The value for leaf nodes.
+        left:  A Node object or Null for leaves.
+        right: A Node object or Null for leaves.
+        split: A Split object representing the split at this node,
+                or Null for leaves
     """
-    def __init__(self, split=None, value=None):
-        self.left = None
-        self.right = None
+    def __init__(self, left=None, right=None, split=None, value=None):
+        self.left = left
+        self.right = right
         self.split = split
         self.value = value
 
@@ -314,7 +330,8 @@ def tree_demo():
                   [0.57, 0.51],
                   [0.61, 0.73]])
     y = np.array([1, 0, 0, 0, 1])
-    tree = DecisionTreeClassifier()
+    # tree = DecisionTreeClassifier()
+    tree = DecisionTreeRegressor()
     tree.fit(X, y)
     draw_tree.draw_tree(X, y, tree)
 

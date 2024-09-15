@@ -99,7 +99,7 @@ def split_generator(X, y, keep_counts=True):
 
 
 def impurity(y, y_counts=None):
-    """ Calculate Gini impurity for the class labels y.
+    """ Calculate Gini impurity for y class labels.
         If y_counts is provided it will be the counts of the labels in y.
     """
     if y_counts is None:
