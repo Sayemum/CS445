@@ -324,16 +324,26 @@ class Node:
 def tree_demo():
     """Simple illustration of creating and drawing a tree classifier."""
     import draw_tree
-    X = np.array([[0.88, 0.39],
-                  [0.49, 0.52],
-                  [0.68, 0.26],
-                  [0.57, 0.51],
-                  [0.61, 0.73]])
-    y = np.array([1, 0, 0, 0, 1])
-    # tree = DecisionTreeClassifier()
-    tree = DecisionTreeRegressor()
+    # X = np.array([[0.88, 0.39],
+    #               [0.49, 0.52],
+    #               [0.68, 0.26],
+    #               [0.57, 0.51],
+    #               [0.61, 0.73]])
+    # y = np.array([1, 0, 0, 0, 1])
+    X = np.array([[1.0, 2.0],
+                  [1.0, 1.0],
+                  [2.0, 1.0],
+                  [2.0, 2.0]])
+    y = np.array([1, 0, 0, 1])
+    
+    tree = DecisionTreeClassifier()
+    # tree = DecisionTreeRegressor()
     tree.fit(X, y)
     draw_tree.draw_tree(X, y, tree)
+    
+    X_test = np.array([[1.5 , 1.75],
+                       [1.5 , 1.25]])
+    print ( tree.predict ( X_test ) )
 
 
 if __name__ == "__main__":
