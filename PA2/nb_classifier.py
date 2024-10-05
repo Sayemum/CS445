@@ -73,8 +73,48 @@ class NBClassifier:
 
         # each row in training data needs a label
         assert (X.shape[0] == y.shape[0])
-
-        raise NotImplementedError()
+        
+        # calculate prior probabilities
+        self.classes = np.unique(y)
+        n_samples, n_features = X.shape
+        self.priors = {class_item: np.sum(y == class_item) / n_samples for class_item in self.classes}
+        
+        # class conditional distributions
+        for feature_index in range(n_features):
+            feature_dist = {}
+            if X_categorical[feature_index]:
+                # categorical features: comput probability
+                all_values = np.unique(X[:, feature_index])
+                
+                for class_item in self.classes:
+                    class_mask = (y == class_item)
+                    values, counts = np.unique(X[class_mask, feature_index], return_counts=True)
+                    total_counts = np.sum(counts)
+                    
+                    smooth_counts = counts # if smoothing_flag is false
+                    if self.smoothing_flag:
+                        # apply laplace smoothing
+                        smooth_counts = {val: 1 for val in all_values}
+                        for i, val in enumerate(values):
+                            smooth_counts[val] += counts[i]
+                            
+                        total_counts += len(all_values)
+                    else:
+                        smooth_counts = {val: 0 for val in all_values}
+                        for i, val in enumerate(values):
+                            smooth_counts[val] = counts[i]
+                    
+                    feature_dist[class_item] = {val: smooth_counts[val] / total_counts for val in all_values}
+            else:
+                # continuous features: compute mean and variance for each class
+                for class_item in self.classes:
+                    class_mask = (y == class_item)
+                    feature_values = X[class_mask, feature_index].astype(float)
+                    mean = np.mean(feature_values)
+                    variance = np.var(feature_values, ddof=1) + 1e-9
+                    feature_dist[class_item] = (mean, variance)
+                
+            self.feature_dists.append(feature_dist)
 
     def feature_class_prob(self, feature_index, x, class_label):
         """
@@ -92,16 +132,23 @@ class NBClassifier:
         """
 
         feature_dist = self.feature_dists[feature_index]
-
-        # validate feature_index
-        assert feature_index < self.X_categorical.shape[0], \
-            'Invalid feature index passed to feature_class_prob'
-
-        # validate class_label
-        assert class_label < len(self.classes), \
-            'invalid class label passed to feature_class_prob'
-
-        raise NotImplementedError()
+        
+        # categorical features
+        if isinstance(x, str):
+            # return probability of value for each class
+            if x in feature_dist[class_label]:
+                return feature_dist[class_label][x]
+            elif self.smoothing_flag: # apply laplace smoothing
+                return 1 / (len(feature_dist[class_label]) + len(feature_dist))
+            else:
+                return 1e-9
+        
+        # continuous features 
+        else:
+            # return probability using gaussian distribution formula
+            mean, variance = feature_dist[class_label]
+            prob = (1 / np.sqrt(2 * np.pi * variance)) * np.exp(-((x - mean) ** 2) / (2 * variance))
+            return prob if prob != 0 else 1e-9
 
     def predict(self, X):
         """
@@ -114,10 +161,23 @@ class NBClassifier:
             Predicted labels for each entry/row in X.
         """
 
-        # validate that x contains exactly the number of features
-        assert (X.shape[1] == self.X_categorical.shape[0])
-
-        raise NotImplementedError()
+        predictions = []
+        for sample in X:
+            # calculate log prob for each class & feature
+            class_probs = {}
+            for class_item in self.classes:
+                class_prob = np.log(self.priors[class_item])
+                
+                for feature_index, x in enumerate(sample):
+                    class_prob += np.log(self.feature_class_prob(feature_index, x, class_item))
+                
+                # store overall log prob for each class
+                class_probs[class_item] = class_prob
+            
+            # predict class with highest log prob
+            predictions.append(max(class_probs, key=class_probs.get))
+        
+        return np.array(predictions)
 
 
 def nb_demo():
