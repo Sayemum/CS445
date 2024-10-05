@@ -1,1 +1,4 @@
-PA2/data/
+PA2/MNIST_X_test.npy
+PA2/MNIST_X_train.npy
+PA2/MNIST_y_test.npy
+PA2/MNIST_y_train.npy

@@ -163,7 +163,7 @@ class NBClassifier:
 
         predictions = []
         for sample in X:
-            # calculate log prob for each class & feature
+            # calculate log likelihood for each class & feature
             class_probs = {}
             for class_item in self.classes:
                 class_prob = np.log(self.priors[class_item])
@@ -171,10 +171,10 @@ class NBClassifier:
                 for feature_index, x in enumerate(sample):
                     class_prob += np.log(self.feature_class_prob(feature_index, x, class_item))
                 
-                # store overall log prob for each class
+                # store overall log likelihood for each class
                 class_probs[class_item] = class_prob
             
-            # predict class with highest log prob
+            # predict class with highest log likelihood
             predictions.append(max(class_probs, key=class_probs.get))
         
         return np.array(predictions)
