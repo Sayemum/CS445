@@ -62,7 +62,7 @@ class NBClassifier:
         loan classification problem in the textbook without smoothing:
         [{0: {'No': 0.5714285714285714, 'Yes': 0.42857142857142855},
          1: {'No': 1.0}   },
-        {0: {'Divorced': 0.14285714285714285, 'Married': 0.5714285714285714, 'Single': 0.2857142857142857},
+        {0: {'Divorced': 0.14285714285714285, 'Married': 0.57, 'Single': 0.28},
          1: {'Divorced': 0.3333333333333333, 'Single': 0.6666666666666666}   },
         {0: (110.0, 54.543560573178574),
          1: (90.0, 5.0)}]
@@ -77,7 +77,7 @@ class NBClassifier:
         # calculate prior probabilities
         self.classes = np.unique(y)
         n_samples, n_features = X.shape
-        self.priors = {class_item: np.sum(y == class_item) / n_samples for class_item in self.classes}
+        self.priors = {item: np.sum(y == item) / n_samples for item in self.classes}
         
         # class conditional distributions
         for feature_index in range(n_features):
@@ -91,7 +91,7 @@ class NBClassifier:
                     values, counts = np.unique(X[class_mask, feature_index], return_counts=True)
                     total_counts = np.sum(counts)
                     
-                    smooth_counts = counts # if smoothing_flag is false
+                    smooth_counts = counts  # if smoothing_flag is false
                     if self.smoothing_flag:
                         # apply laplace smoothing
                         smooth_counts = {val: 1 for val in all_values}
@@ -104,7 +104,8 @@ class NBClassifier:
                         for i, val in enumerate(values):
                             smooth_counts[val] = counts[i]
                     
-                    feature_dist[class_item] = {val: smooth_counts[val] / total_counts for val in all_values}
+                    feature_dist[class_item] = \
+                        {val: smooth_counts[val] / total_counts for val in all_values}
             else:
                 # continuous features: compute mean and variance for each class
                 for class_item in self.classes:
@@ -138,7 +139,7 @@ class NBClassifier:
             # return probability of value for each class
             if x in feature_dist[class_label]:
                 return feature_dist[class_label][x]
-            elif self.smoothing_flag: # apply laplace smoothing
+            elif self.smoothing_flag:  # apply laplace smoothing
                 return 1 / (len(feature_dist[class_label]) + len(feature_dist))
             else:
                 return 1e-9
@@ -161,15 +162,18 @@ class NBClassifier:
             Predicted labels for each entry/row in X.
         """
 
+        epsilon = 1e-9
         predictions = []
+        
         for sample in X:
             # calculate log likelihood for each class & feature
             class_probs = {}
             for class_item in self.classes:
-                class_prob = np.log(self.priors[class_item])
+                class_prob = np.log(self.priors[class_item] + epsilon)
                 
                 for feature_index, x in enumerate(sample):
-                    class_prob += np.log(self.feature_class_prob(feature_index, x, class_item))
+                    class_prob += \
+                        np.log(self.feature_class_prob(feature_index, x, class_item) + epsilon)
                 
                 # store overall log likelihood for each class
                 class_probs[class_item] = class_prob

@@ -12,7 +12,7 @@ def predict(x, w):
         x - d-dimensional numpy array (with bias value 1 at position 0)
         w - d-dimensional weight array
     """
-    return -1
+    return w.transpose() @ x
 
 
 def calc_sse(X, w, y):
@@ -23,7 +23,12 @@ def calc_sse(X, w, y):
         w - d-dimensional weight array
         y - length-n numpy array of target values
     """
-    return -1
+    sse = 0
+    
+    for i in range(len(X)):
+        predicted = predict(X[i], w)
+    
+    return .5 * sse
 
 def batch_gd(X, w, y, eta):
     """Perform one round of batch gradient descent and return the new 
@@ -62,10 +67,10 @@ def main():
     w = np.array([0, 1, .5])
 
     print("1a:")
-
+    print(predict(np.array([1, 2, 3]), w))
 
     print("\n1b:")
-
+    print(calc_sse(X, w, y))
 
     print("\n2:")
 
