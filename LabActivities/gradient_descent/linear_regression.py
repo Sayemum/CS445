@@ -1,4 +1,6 @@
 """
+name: Sayemum Hassan
+
 Gradient descent for linear regression exercises.
 """
 import numpy as np
