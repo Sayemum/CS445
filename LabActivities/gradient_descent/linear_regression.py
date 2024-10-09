@@ -23,12 +23,9 @@ def calc_sse(X, w, y):
         w - d-dimensional weight array
         y - length-n numpy array of target values
     """
-    summed = 0
-    for i in range(len(y)):
-        predicted = predict(X[i], w)
-        summed += y[i] - predicted
-    
-    sse = (1/2) * (summed ** 2)
+    predictions = X @ w
+    errors = y - predictions
+    sse = np.sum(errors ** 2)
     
     return .5 * sse
 
@@ -47,7 +44,7 @@ def batch_gd(X, w, y, eta):
     errors = predictions - y
     gradient = (X.T @ errors) / m
     new_w = w - eta * gradient
-    
+
     return new_w
  
 def stochastic_gd(X, w, y, eta):
@@ -87,10 +84,12 @@ def main():
     print(calc_sse(X, w, y))
 
     print("\n2:")
-    print(batch_gd(X, w, y, .01))
+    w_new = batch_gd(X, w, y, .01)
+    print(w_new)
 
     print("\n3:")
-    print(stochastic_gd(X, w, y, .01))
+    w_new = stochastic_gd(X, w, y, .01)
+    print(w_new)
 
 if __name__ == "__main__":
     main()
