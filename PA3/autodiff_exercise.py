@@ -11,12 +11,24 @@ Version: 1
 
 import scalarflow as sf
 
-sf.gen_dot("filename")
 
-# with sf.Graph() as g:
-#     a = sf.Constant(7.0)
-#     b = sf.Constant(3.0)
-#     sum = sf.Add(a, b)
+def main():
+    with sf.Graph() as g:
+        x = sf.Constant(0, "x")
+        y = sf.Constant(2, "y")
+        
+        l0 = sf.Pow(x, 2, "l0")
+        l1 = sf.Pow(y, 2, "l1")
+        
+        l3 = sf.Add(l0, l1, "l3")
+        
+        l4 = sf.Pow(l3, 3, "l4")
+        l5 = sf.Exp(x, "l5")
+        
+        l6 = sf.Multiply(l5, l4, "l6")
+        
+        g.gen_dot("scalarflow_autodiff.txt")
 
-#     result = g.run(sum)
-#     print(result) # Prints 10.0
+
+if __name__ == "__main__":
+    main()
