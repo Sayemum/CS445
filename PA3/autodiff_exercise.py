@@ -11,17 +11,12 @@ Version: 1
 
 import scalarflow as sf
 
-with sf.Graph() as g:
-    a = sf.Constant(7.0)
-    b = sf.Constant(3.0)
-    sum = sf.Add(a, b)
+sf.gen_dot("filename")
 
-    result = g.run(sum)
-    print(result) # Prints 10.0
+# with sf.Graph() as g:
+#     a = sf.Constant(7.0)
+#     b = sf.Constant(3.0)
+#     sum = sf.Add(a, b)
 
-# a = sf.Constant(7.0)
-# b = sf.Constant(3.0)
-# sum = sf.Add(a, b)
-
-# result = sf.get_current_graph.run(sum)
-# print(result) # Prints 10.0
+#     result = g.run(sum)
+#     print(result) # Prints 10.0
