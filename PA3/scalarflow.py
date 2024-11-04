@@ -301,8 +301,17 @@ class Graph:
 
         """
 
-    # UNFINISHED!!
-    pass
+        # UNFINISHED!!
+        # pass
+        # print(node)
+        # print(feed_dict)
+        value = node.calculate()
+        
+        
+        # After this method is called the value attribute of all the node and all of its ancestors will be set.
+        # The value attributes of non-ancestors are not defined.
+        # for placeholder_name, value in feed_dict.items():
+        
 
 
 # Construct a default computation graph.
@@ -357,12 +366,14 @@ class Node:
         """ Value should be read-only (except for variable nodes). """
         # UNFINISHED!!
         return None
+        # return self._value
 
     @property
     def derivative(self):
         """ derivative should be read-only. """
         # UNFINISHED!!
         return None
+        # return self._derivative
 
     def __repr__(self):
         """ Default string representation is the Node's name. """
@@ -386,6 +397,17 @@ class BinaryOp(Node):
         self.operand2 = operand2
         _GRAPH._add_edge(operand1, self)
         _GRAPH._add_edge(operand2, self)
+    
+    def calculate(self, operator):
+        match operator:
+            case "+":
+                return self.operand1.value + self.operand2.value
+            case "-":
+                return self.operand1.value - self.operand2.value
+            case "*":
+                return self.operand1.value * self.operand2.value
+            case "/":
+                return self.operand1.value / self.operand2.value
 
 
 class UnaryOp(Node):
@@ -418,13 +440,15 @@ class Variable(Node):
             name: Variable name
         """
         super().__init__(name)
+        self._value = value
 
     def assign(self, value):
         """ Assign a new value to this variable
 
         """
         # UNFINISHED!
-        pass
+        # pass
+        self._value = value
 
 
 class Constant(Node):
@@ -458,6 +482,9 @@ class Add(BinaryOp):
 
     def __init__(self, operand1, operand2, name=""):
         super().__init__(operand1, operand2, name)
+    
+    def calculate(self):
+        return super().calculate("+")
 
 
 class Subtract(BinaryOp):
@@ -500,6 +527,7 @@ class Pow(UnaryOp):
         """
 
         super().__init__(operand, name)
+        self._power = power
 
 
 class Exp(UnaryOp):
