@@ -429,17 +429,6 @@ class BinaryOp(Node):
         self.operand2 = operand2
         _GRAPH._add_edge(operand1, self)
         _GRAPH._add_edge(operand2, self)
-    
-    # def calculate(self, operator):
-    #     match operator:
-    #         case "+":
-    #             return self.operand1.value + self.operand2.value
-    #         case "-":
-    #             return self.operand1.value - self.operand2.value
-    #         case "*":
-    #             return self.operand1.value * self.operand2.value
-    #         case "/":
-    #             return self.operand1.value / self.operand2.value
 
 
 class UnaryOp(Node):
@@ -533,15 +522,12 @@ class Add(BinaryOp):
     def __init__(self, operand1, operand2, name=""):
         super().__init__(operand1, operand2, name)
     
-    # def calculate(self):
-    #     return super().calculate("+")
-    
     def forward(self):
         self.value = self.operand1.value + self.operand2.value
     
     def backward(self):
-        if self.derivative is None:
-            return
+        # if self.derivative is None:
+        #     return
         
         # Initially set derivatives to 0
         if self.operand1.derivative is None:
@@ -564,8 +550,8 @@ class Subtract(BinaryOp):
         self.value = self.operand1.value - self.operand2.value
     
     def backward(self):
-        if self.derivative is None:
-            return
+        # if self.derivative is None:
+        #     return
         
         # Initially set derivatives to 0
         if self.operand1.derivative is None:
@@ -588,8 +574,8 @@ class Multiply(BinaryOp):
         self.value = self.operand1.value * self.operand2.value
     
     def backward(self):
-        if self.derivative is None:
-            return
+        # if self.derivative is None:
+        #     return
         
         # Initially set derivatives to 0
         if self.operand1.derivative is None:
@@ -612,8 +598,8 @@ class Divide(BinaryOp):
         self.value = self.operand1.value / self.operand2.value
     
     def backward(self):
-        if self.derivative is None:
-            return
+        # if self.derivative is None:
+        #     return
         
         # Initially set derivatives to 0
         if self.operand1.derivative is None:
@@ -647,8 +633,8 @@ class Pow(UnaryOp):
         self.value = self.operand.value ** self._power
     
     def backward(self):
-        if self.derivative is None:
-            return
+        # if self.derivative is None:
+        #     return
         
         # Initially set derivatives to 0
         if self.operand.derivative is None:
@@ -669,14 +655,14 @@ class Exp(UnaryOp):
         self.value = math.e ** self.operand.value
     
     def backward(self):
-        if self.derivative is None:
-            return
+        # if self.derivative is None:
+        #     return
         
         # Initially set derivatives to 0
         if self.operand.derivative is None:
             self.operand.derivative = 0
         
-        self.operand.derivative += self.derivative
+        self.operand.derivative += self.derivative * math.exp(self.operand.value)
 
 
 class Log(UnaryOp):
@@ -690,8 +676,8 @@ class Log(UnaryOp):
         self.value = math.log1p(self.operand.value)
     
     def backward(self):
-        if self.derivative is None:
-            return
+        # if self.derivative is None:
+        #     return
         
         # Initially set derivatives to 0
         if self.operand.derivative is None:
@@ -711,8 +697,8 @@ class Abs(UnaryOp):
         self.value = abs(self.operand.value)
     
     def backward(self):
-        if self.derivative is None:
-            return
+        # if self.derivative is None:
+        #     return
         
         # Initially set derivatives to 0
         if self.operand.derivative is None:
