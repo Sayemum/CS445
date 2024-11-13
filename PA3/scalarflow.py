@@ -608,7 +608,7 @@ class Divide(BinaryOp):
             self.operand2.derivative = 0
         
         self.operand1.derivative += self.derivative / self.operand2.value
-        self.operand2.derivative -= self.derivative * self.operand1.value / (self.operand2.value ** 2)
+        self.operand2.derivative -= (self.derivative * self.operand1.value) / (self.operand2.value ** 2)
 
 
 # UNARY OPERATORS --------------------
@@ -640,7 +640,7 @@ class Pow(UnaryOp):
         if self.operand.derivative is None:
             self.operand.derivative = 0
         
-        self.operand.derivative += self.derivative * self._power * (self.operand.value ** (self._power - 1))
+        self.operand.derivative += self._power * (self.operand.value ** (self._power - 1)) * self.derivative
 
 
 class Exp(UnaryOp):
@@ -662,7 +662,7 @@ class Exp(UnaryOp):
         if self.operand.derivative is None:
             self.operand.derivative = 0
         
-        self.operand.derivative += self.derivative * math.exp(self.operand.value)
+        self.operand.derivative += self.value * self.derivative
 
 
 class Log(UnaryOp):
