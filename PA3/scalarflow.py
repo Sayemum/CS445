@@ -137,6 +137,7 @@ node that is involved in the computation::
 import networkx.algorithms.dag as dag
 import networkx as nx
 import math
+import numpy as np
 
 
 class Graph:
@@ -315,7 +316,7 @@ class Graph:
         
         # calculate backward passes
         if compute_derivatives:
-            n._derivative = 1.0
+            node._derivative = 1.0
             for n in reversed(ancestor_list):
                 n.backward()
         
@@ -610,7 +611,8 @@ class Exp(UnaryOp):
         super().__init__(operand, name)
     
     def forward(self):
-        self._value = math.e ** self.operand.value
+        # self._value = math.e ** self.operand.value
+        self._value = np.exp(self.operand.value)
     
     def backward(self):
         if self.operand.derivative is None:
@@ -627,7 +629,7 @@ class Log(UnaryOp):
         super().__init__(operand, name)
     
     def forward(self):
-        self._value = math.log1p(self.operand.value)
+        self._value = np.log(self.operand.value)
     
     def backward(self):
         if self.operand.derivative is None:
@@ -652,7 +654,7 @@ class Abs(UnaryOp):
         
         if self.operand.value > 0:
             self.operand._derivative += self.derivative
-        elif self.operand.derivative < 0:
+        elif self.operand.value < 0:
             self.operand._derivative -= self.derivative
 
 def main():
