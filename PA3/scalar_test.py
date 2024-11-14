@@ -4,16 +4,16 @@ import math
 
 def main():
     with sf.Graph() as g:
-        x = sf.Constant(2.0, "x")
-        y = sf.Placeholder("y")
+        # x = sf.Constant(2.0, "x")
+        # y = sf.Placeholder("y")
         
-        sum1 = sf.Add(x, y)
-        sum2 = sf.Add(sum1, y)
+        # sum1 = sf.Add(x, y)
+        # sum2 = sf.Add(sum1, y)
         
-        print(x.derivative, y.derivative, sum1.derivative, sum2.derivative)
-        result = g.run(sum1, feed_dict={'y': 2.0} ,compute_derivatives=True)
-        print(x.derivative, y.derivative, sum1.derivative, sum2.derivative)
-        print(result)
+        # print(x.derivative, y.derivative, sum1.derivative, sum2.derivative)
+        # result = g.run(sum1, feed_dict={'y': 2.0} ,compute_derivatives=True)
+        # print(x.derivative, y.derivative, sum1.derivative, sum2.derivative)
+        # print(result)
         
         
         
@@ -39,6 +39,20 @@ def main():
         # nodes = [x, y, x_sq, y_sq, add_x_y_sq, cubed_sq, e, e_x, mult]
         # for node in nodes:
         #     print(f"({node.value} - {node.derivative})", end=" ")
+        
+        
+        
+        
+        # ReLU Example
+        x = sf.Variable(-3.0)
+        relu_node = sf.ReLU(x)
+        
+        result = g.run(relu_node)
+        print(result)  # Prints 0.0 because ReLU(-3) is 0
+
+        x.assign(4.0)
+        result = g.run(relu_node)
+        print(result)  # Prints 4.0 because ReLU(4) is 4
         
         g.gen_dot("scalar_test.txt")
 

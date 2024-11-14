@@ -623,6 +623,22 @@ class Abs(UnaryOp):
         elif self.operand.value < 0:
             self.operand._derivative -= self.derivative
 
+
+class ReLU(UnaryOp):
+    """  ReLU nodes will be used to solve the vanishing gradients problem.
+    """
+    _COUNT = 0
+
+    def __init__(self, operand, name=""):
+        super().__init__(operand, name)
+    
+    def forward(self):
+        self._value = max(0, self.operand.value)
+    
+    def backward(self):
+        if self.operand.value > 0:
+            self.operand._derivative += self.derivative * 1
+
 def main():
     pass
 
