@@ -1,6 +1,8 @@
 digraph scalarflow {
 rankdir="LR"
-x [label="x: 2.0 \nvalue:  2\ngrad: 2"]
-Abs_0 [label="Abs_0 \nvalue:  2\ngrad: 2"]
-   x -> Abs_0
+x [label="x: 2.0 \nvalue:  2\ngrad: 1"]
+y [label="y \nvalue:  2\ngrad: 1"]
+Add_0 [label="Add_0 \nvalue:  4\ngrad: 1"]
+   x -> Add_0
+   y -> Add_0
 }

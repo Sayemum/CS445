@@ -1,22 +1,44 @@
 import scalarflow as sf
+import math
 
 
 def main():
     with sf.Graph() as g:
         x = sf.Constant(2.0, "x")
-        # print(x.value)
-        # print(x.derivative)
+        y = sf.Placeholder("y")
+        
+        sum1 = sf.Add(x, y)
+        # sum2 = sf.Add(sum1, y)
+        
+        # print(x.derivative, y.derivative, sum1.derivative, sum2.derivative)
+        result = g.run(sum1, feed_dict={'y': 2.0} ,compute_derivatives=True)
+        # print(x.derivative, y.derivative, sum1.derivative, sum2.derivative)
+        print(result)
+        
+        
+        
+        
+        # AUTODIFF Exercises Sheet Example
+        # x = sf.Constant(0.0, "x")
         # y = sf.Constant(2.0, "y")
         
-        # sum = sf.Divide(x, y)
-        unary_op = sf.Abs(x)
+        # x_sq = sf.Pow(x, 2, "l0")
+        # y_sq = sf.Pow(y, 2, "l1")
         
-        # result = g.run(sum)
-        # print(result) # Prints 4.0
-        # print()
+        # add_x_y_sq = sf.Add(x_sq, y_sq, "l2")
         
-        result = g.run(unary_op, compute_derivatives=True)
-        print(result)
+        # cubed_sq = sf.Pow(add_x_y_sq, 3, "l3")
+        
+        # e = sf.Constant(math.e, "e")
+        # e_x = sf.Pow(e, x.value, "l4")
+        
+        # mult = sf.Multiply(e_x, cubed_sq, "l5")
+        # result = g.run(mult, compute_derivatives=True)
+        # print(result)
+        
+        # nodes = [x, y, x_sq, y_sq, add_x_y_sq, cubed_sq, e, e_x, mult]
+        # for node in nodes:
+        #     print(f"({node.value} - {node.derivative})", end=" ")
         
         g.gen_dot("scalar_test.txt")
 
