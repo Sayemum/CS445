@@ -8,11 +8,11 @@ def main():
         y = sf.Placeholder("y")
         
         sum1 = sf.Add(x, y)
-        # sum2 = sf.Add(sum1, y)
+        sum2 = sf.Add(sum1, y)
         
-        # print(x.derivative, y.derivative, sum1.derivative, sum2.derivative)
+        print(x.derivative, y.derivative, sum1.derivative, sum2.derivative)
         result = g.run(sum1, feed_dict={'y': 2.0} ,compute_derivatives=True)
-        # print(x.derivative, y.derivative, sum1.derivative, sum2.derivative)
+        print(x.derivative, y.derivative, sum1.derivative, sum2.derivative)
         print(result)
         
         

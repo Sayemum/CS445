@@ -312,11 +312,12 @@ class Graph:
         
         ancestor_list = self._ancestor_list(node) + [node]  # ancestor list including the node itself
         for n in ancestor_list:
+            n._derivative = 0
             n.forward()
         
         # calculate backward passes
         if compute_derivatives:
-            node._derivative = 1.0
+            node._derivative = 1
             for n in reversed(ancestor_list):
                 n.backward()
         
@@ -376,14 +377,12 @@ class Node:
     def value(self):
         """ Value should be read-only (except for variable nodes). """
         # UNFINISHED!!
-        # return None
         return self._value # CHANGE #2
 
     @property
     def derivative(self):
         """ derivative should be read-only. """
         # UNFINISHED!!
-        # return None
         return self._derivative # CHANGE #3
 
     def __repr__(self):
@@ -505,11 +504,6 @@ class Add(BinaryOp):
         self._value = self.operand1.value + self.operand2.value # CHANGE #6
     
     def backward(self):
-        if self.operand1.derivative is None:
-            self.operand1._derivative = 0
-        if self.operand2.derivative is None:
-            self.operand2._derivative = 0
-        
         self.operand1._derivative += self.derivative
         self.operand2._derivative += self.derivative
 
@@ -525,11 +519,6 @@ class Subtract(BinaryOp):
         self._value = self.operand1.value - self.operand2.value
     
     def backward(self):
-        if self.operand1.derivative is None:
-            self.operand1._derivative = 0
-        if self.operand2.derivative is None:
-            self.operand2._derivative = 0
-        
         self.operand1._derivative += self.derivative
         self.operand2._derivative -= self.derivative
 
@@ -545,11 +534,6 @@ class Multiply(BinaryOp):
         self._value = self.operand1.value * self.operand2.value
     
     def backward(self):
-        if self.operand1.derivative is None:
-            self.operand1._derivative = 0
-        if self.operand2.derivative is None:
-            self.operand2._derivative = 0
-        
         self.operand1._derivative += self.derivative * self.operand2.value
         self.operand2._derivative += self.derivative * self.operand1.value
 
@@ -565,11 +549,6 @@ class Divide(BinaryOp):
         self._value = self.operand1.value / self.operand2.value
     
     def backward(self):
-        if self.operand1.derivative is None:
-            self.operand1._derivative = 0
-        if self.operand2.derivative is None:
-            self.operand2._derivative = 0
-        
         self.operand1._derivative += self.derivative / self.operand2.value
         self.operand2._derivative -= (self.derivative * self.operand1.value) / (self.operand2.value ** 2)
 
@@ -596,9 +575,6 @@ class Pow(UnaryOp):
         self._value = self.operand.value ** self._power
     
     def backward(self):
-        if self.operand.derivative is None:
-            self.operand._derivative = 0
-        
         self.operand._derivative += self._power * (self.operand.value ** (self._power - 1)) * self.derivative
 
 
@@ -611,13 +587,9 @@ class Exp(UnaryOp):
         super().__init__(operand, name)
     
     def forward(self):
-        # self._value = math.e ** self.operand.value
         self._value = np.exp(self.operand.value)
     
     def backward(self):
-        if self.operand.derivative is None:
-            self.operand._derivative = 0
-        
         self.operand._derivative += self.value * self.derivative
 
 
@@ -632,9 +604,6 @@ class Log(UnaryOp):
         self._value = np.log(self.operand.value)
     
     def backward(self):
-        if self.operand.derivative is None:
-            self.operand._derivative = 0
-        
         self.operand._derivative += self.derivative / self.operand.value
 
 
@@ -649,9 +618,6 @@ class Abs(UnaryOp):
         self._value = abs(self.operand.value)
     
     def backward(self):
-        if self.operand.derivative is None:
-            self.operand._derivative = 0
-        
         if self.operand.value > 0:
             self.operand._derivative += self.derivative
         elif self.operand.value < 0:
