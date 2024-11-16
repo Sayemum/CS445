@@ -301,16 +301,14 @@ class Graph:
         Returns:  The numeric value of of the indicated node.
 
         """
-
-    # UNFINISHED!!
-    # pass
     
         # Set placeholder values
         for placeholder_name, value in feed_dict.items():
             if placeholder_name in self.nodes_by_name:
                 self.nodes_by_name[placeholder_name]._value = value
         
-        ancestor_list = self._ancestor_list(node) + [node]  # ancestor list including the node itself
+        # ancestor list including the node itself
+        ancestor_list = self._ancestor_list(node) + [node]
         for n in ancestor_list:
             n._derivative = 0
             n.forward()
@@ -369,21 +367,19 @@ class Node:
             self.__class__._COUNT += 1
 
         self.name = name
-        self._value = None # CHANGE #1
+        self._value = None
         self._derivative = None
         _GRAPH._add_node(self)
 
     @property
     def value(self):
         """ Value should be read-only (except for variable nodes). """
-        # UNFINISHED!!
-        return self._value # CHANGE #2
+        return self._value
 
     @property
     def derivative(self):
         """ derivative should be read-only. """
-        # UNFINISHED!!
-        return self._derivative # CHANGE #3
+        return self._derivative
 
     def __repr__(self):
         """ Default string representation is the Node's name. """
@@ -439,15 +435,13 @@ class Variable(Node):
             name: Variable name
         """
         super().__init__(name)
-        self._value = value # CHANGE #4
+        self._value = value
 
     def assign(self, value):
         """ Assign a new value to this variable
 
         """
-        # UNFINISHED!
-        # pass
-        self._value = value # CHANGE #5
+        self._value = value
     
     def forward(self):
         pass

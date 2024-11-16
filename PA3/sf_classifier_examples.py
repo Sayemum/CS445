@@ -76,7 +76,8 @@ def mlp_xor(lr=.09, epochs=100, activation='sigmoid', hidden_layers=[10]):
     losses = classifier.train(dataset_train_x, dataset_train_y, epochs=epochs,
                      learning_rate=lr)
     
-    if losses is None or not losses:  # Check if losses is empty or None
+    # Check if losses is empty or None
+    if losses is None or not losses:
         print("Losses are empty or None")
     else:
         print("Losses: ", losses)
@@ -103,7 +104,8 @@ def run_multiple_sessions(runs=10, lr=.09, epochs=100, activation='sigmoid', hid
 
 def plot_learning_curves(all_losses, title):
     for i, losses in enumerate(all_losses):
-        if losses:  # Ensure losses is not empty or None
+        # Ensure losses is not empty or None
+        if losses:
             plt.plot(losses, label=f'Run {i + 1}')
         else:
             print(f"Skipping empty losses for Run {i + 1}")
@@ -117,7 +119,8 @@ def save_learning_curves(all_losses, title, filename):
     plt.figure()
     plot_learning_curves(all_losses, title)
     plt.savefig(filename)
-    plt.close()  # Close the figure to avoid overlap
+    # Close the figure to avoid overlap
+    plt.close()
 
 
 def ten_runs_test(deep_network=False):
@@ -128,17 +131,23 @@ def ten_runs_test(deep_network=False):
     
     # Select hidden layer configuration based on deep_network flag
     if deep_network:
-        hidden_layers = [10, 10, 10, 10, 10]  # 5 hidden layers, each with 10 units
+        # 5 hidden layers, each with 10 units
+        hidden_layers = [10, 10, 10, 10, 10]
         title_suffix = "with 5 Hidden Layers"
     else:
-        hidden_layers = [10]  # 1 hidden layer with 10 units (Step 4)
+        # 1 hidden layer with 10 units (Step 4)
+        hidden_layers = [10]
         title_suffix = "with 1 Hidden Layer"
     
-    sigmoid_losses = run_multiple_sessions(runs=10, lr=0.09, epochs=100, activation='sigmoid', hidden_layers=hidden_layers)
-    save_learning_curves(sigmoid_losses, f'Learning Curves for Sigmoid Activation {title_suffix}', f'sigmoid_{title_suffix.lower().replace(" ", "_")}.png')
+    sigmoid_losses = run_multiple_sessions(runs=10, lr=0.09, epochs=100,
+                                           activation='sigmoid', hidden_layers=hidden_layers)
+    save_learning_curves(sigmoid_losses, f'Learning Curves for Sigmoid Activation {title_suffix}',
+                         f'sigmoid_{title_suffix.lower().replace(" ", "_")}.png')
 
-    relu_losses = run_multiple_sessions(runs=10, lr=0.09, epochs=100, activation='relu', hidden_layers=hidden_layers)
-    save_learning_curves(relu_losses, f'Learning Curves for ReLU Activation {title_suffix}', f'relu_{title_suffix.lower().replace(" ", "_")}.png')
+    relu_losses = run_multiple_sessions(runs=10, lr=0.09, epochs=100,
+                                        activation='relu', hidden_layers=hidden_layers)
+    save_learning_curves(relu_losses, f'Learning Curves for ReLU Activation {title_suffix}',
+                         f'relu_{title_suffix.lower().replace(" ", "_")}.png')
 
 
 if __name__ == "__main__":
