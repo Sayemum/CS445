@@ -1,5 +1,6 @@
 """
 Examples of running tf_classifers.
+Modified By: Sayemum Hassan
 """
 import numpy as np
 import sf_classifiers

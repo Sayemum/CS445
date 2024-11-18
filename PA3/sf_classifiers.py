@@ -1,6 +1,7 @@
 """Binary classifiers using low-level ScalarFlow.
 
 Author: Nathan Sprague
+Modified By: Sayemum Hassan
 Version: 4/16/2020
 
 """
