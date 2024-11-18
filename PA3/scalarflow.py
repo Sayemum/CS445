@@ -136,7 +136,6 @@ node that is involved in the computation::
 """
 import networkx.algorithms.dag as dag
 import networkx as nx
-import math
 import numpy as np
 
 
@@ -495,7 +494,7 @@ class Add(BinaryOp):
         super().__init__(operand1, operand2, name)
     
     def forward(self):
-        self._value = self.operand1.value + self.operand2.value # CHANGE #6
+        self._value = self.operand1.value + self.operand2.value
     
     def backward(self):
         self.operand1._derivative += self.derivative
@@ -544,7 +543,8 @@ class Divide(BinaryOp):
     
     def backward(self):
         self.operand1._derivative += self.derivative / self.operand2.value
-        self.operand2._derivative -= (self.derivative * self.operand1.value) / (self.operand2.value ** 2)
+        self.operand2._derivative -= ((self.derivative * self.operand1.value)
+                                      / (self.operand2.value ** 2))
 
 
 # UNARY OPERATORS --------------------
@@ -569,7 +569,9 @@ class Pow(UnaryOp):
         self._value = self.operand.value ** self._power
     
     def backward(self):
-        self.operand._derivative += self._power * (self.operand.value ** (self._power - 1)) * self.derivative
+        self.operand._derivative += (self._power
+                                     * (self.operand.value ** (self._power - 1))
+                                     * self.derivative)
 
 
 class Exp(UnaryOp):
@@ -632,6 +634,7 @@ class ReLU(UnaryOp):
     def backward(self):
         if self.operand.value > 0:
             self.operand._derivative += self.derivative * 1
+
 
 def main():
     pass
